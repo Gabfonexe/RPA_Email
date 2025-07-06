@@ -359,9 +359,9 @@
             const callBackAlert = document.getElementById('callBackAlert');
             loading.style.display = 'block';
             try {
-                const response = await fetch('https://rpa-email.onrender.com', { method: 'HEAD' });
+                const response = await fetch('https://rpa-email.onrender.com/', { method: 'HEAD' });
 
-                if (response.ok) {
+                if (response) {
                     loading.style.display = 'none';
                     clearInterval(apiInterval); 
                 } else {
