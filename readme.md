@@ -210,4 +210,5 @@ register_routes(api)
 
 ### 💼 Projeto pessoal com foco em IA + RPA
 ### 📬 gabrielfonseca.devback@email.com
+### 💻 [App](https://rpa-email.vercel.app/index.html))
 ### 📎 [LinkedIn](https://www.linkedin.com/in/gabrielfonsecaq) • [GitHub](https://github.com/Gabfonexe) • [Portfólios](https://github.com/Gabfonexe?tab=repositories)
