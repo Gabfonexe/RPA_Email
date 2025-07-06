@@ -1,0 +1,415 @@
+
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RPA Email - Listagem</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f8fafc;
+        }
+        
+        .bg-gradient {
+            background: linear-gradient(135deg, #3b82f6 0%, #10b981 100%);
+        }
+        
+        .card {
+            transition: all 0.3s ease;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px -5px rgba(59, 130, 246, 0.3);
+        }
+        
+        .dialog-overlay {
+            background-color: rgba(0, 0, 0, 0.5);
+            transition: opacity 0.3s ease;
+        }
+        
+        .dialog-content {
+            transition: all 0.3s ease;
+        }
+        
+        .badge-productive {
+            background: linear-gradient(135deg, #059669 0%, #10b981 100%);
+        }
+        
+        .badge-unproductive {
+            background: linear-gradient(135deg, #ef4444 0%, #f87171 100%);
+        }
+        
+        .shimmer {
+            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+        }
+        
+        @keyframes shimmer {
+            0% {
+                background-position: -200% 0;
+            }
+            100% {
+                background-position: 200% 0;
+            }
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="min-h-screen flex flex-col">
+        <header class="bg-gradient text-white shadow-lg">
+            <div class="container mx-auto px-4 py-6">
+                <div class="flex justify-between items-center">
+                    <div class="flex items-center space-x-3">
+                        <a href="index.html">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                        </svg>
+                        </a>
+                        <h1 class="text-2xl font-bold"><a href="index.html">RPA Email</a></h1>
+                    </div>
+                    <div class="flex items-center space-x-4">
+                        <div class="relative">
+                            <input type="text" id="search" placeholder="Buscar emails..." class="px-4 py-2 rounded-full text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 w-64">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 absolute right-3 top-2.5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                            </svg>
+                        </div>
+                        <button id="refreshBtn" class="p-2 rounded-full hover:bg-white hover:bg-opacity-20 transition-colors">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <main class="flex-grow container mx-auto px-4 py-8">
+            <div class="mb-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                <div class="flex items-center space-x-2">
+                    <h2 class="text-xl font-semibold text-gray-800">Emails Classificados</h2>
+                    <span id="totalCount" class="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded-full">0</span>
+                </div>
+                <div class="flex flex-wrap gap-2">
+                    <button id="filterAll" class="px-4 py-2 bg-white border border-gray-300 rounded-full text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 active:bg-blue-100 active:text-blue-800">
+                        Todos
+                    </button>
+                    <button id="filterProductive" class="px-4 py-2 bg-white border border-gray-300 rounded-full text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-green-500 active:bg-green-100 active:text-green-800">
+                        Produtivos
+                    </button>
+                    <button id="filterUnproductive" class="px-4 py-2 bg-white border border-gray-300 rounded-full text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-red-500 active:bg-red-100 active:text-red-800">
+                        Improdutivos
+                    </button>
+                </div>
+            </div>
+
+            <div id="loadingState" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="bg-white rounded-xl shadow-md overflow-hidden shimmer h-32"></div>
+                <div class="bg-white rounded-xl shadow-md overflow-hidden shimmer h-32"></div>
+                <div class="bg-white rounded-xl shadow-md overflow-hidden shimmer h-32"></div>
+                <div class="bg-white rounded-xl shadow-md overflow-hidden shimmer h-32"></div>
+                <div class="bg-white rounded-xl shadow-md overflow-hidden shimmer h-32"></div>
+                <div class="bg-white rounded-xl shadow-md overflow-hidden shimmer h-32"></div>
+            </div>
+            
+            <div id="emailCards" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 hidden">            
+            </div>
+
+            <div id="emptyState" class="hidden flex flex-col items-center justify-center py-12">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                </svg>
+                <h3 class="mt-4 text-lg font-medium text-gray-600">Nenhum email encontrado</h3>
+                <p class="mt-1 text-gray-500">Tente ajustar seus filtros ou busque por outro termo.</p>
+            </div>
+        </main>
+
+        <footer class="bg-white border-t border-gray-200 py-4">
+            <div class="container mx-auto px-4 text-center text-gray-500 text-sm">
+                &copy; 2025 RPA Email. Todos os direitos reservados.
+            </div>
+        </footer>
+    </div>
+
+    <div id="messageDialog" class="fixed inset-0 z-50 hidden">
+        <div class="dialog-overlay absolute inset-0 opacity-0"></div>
+        <div class="flex items-center justify-center min-h-screen p-4">
+            <div class="dialog-content bg-white w-full max-w-2xl rounded-xl shadow-2xl opacity-0 scale-95 transform transition-all">
+                <div class="p-6">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <h3 id="dialogName" class="text-xl font-semibold text-gray-900"></h3>
+                            <div id="dialogClassification" class="mt-1"></div>
+                        </div>
+                        <button id="closeDialog" class="p-2 rounded-full hover:bg-gray-100 transition-colors">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="mt-4">
+                        <h4 class="text-sm font-medium text-gray-500 mb-2">Mensagem:</h4>
+                        <div id="dialogMessage" class="bg-gray-50 p-4 rounded-lg text-gray-700 max-h-96 overflow-y-auto"></div>
+                    </div>
+                </div>
+                <div class="bg-gray-50 px-6 py-4 rounded-b-xl flex justify-end">
+                    <button id="closeDialogBtn" class="px-4 py-2 bg-gradient text-white rounded-lg hover:opacity-90 transition-opacity">
+                        Fechar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const loadingState = document.getElementById('loadingState');
+        const emailCards = document.getElementById('emailCards');
+        const emptyState = document.getElementById('emptyState');
+        const totalCount = document.getElementById('totalCount');
+        const messageDialog = document.getElementById('messageDialog');
+        const dialogOverlay = messageDialog.querySelector('.dialog-overlay');
+        const dialogContent = messageDialog.querySelector('.dialog-content');
+        const dialogName = document.getElementById('dialogName');
+        const dialogClassification = document.getElementById('dialogClassification');
+        const dialogMessage = document.getElementById('dialogMessage');
+        const closeDialog = document.getElementById('closeDialog');
+        const closeDialogBtn = document.getElementById('closeDialogBtn');
+        const searchInput = document.getElementById('search');
+        const refreshBtn = document.getElementById('refreshBtn');
+        const filterAll = document.getElementById('filterAll');
+        const filterProductive = document.getElementById('filterProductive');
+        const filterUnproductive = document.getElementById('filterUnproductive');
+
+        let emails = [];
+        let filteredEmails = [];
+        let currentFilter = 'all';
+        let searchTerm = '';
+   
+        async function init() {
+            const params = new URLSearchParams(window.location.search);
+            const userEmail = params.get('email');
+
+            try {
+                const response = await fetch('http://127.0.0.1:5000/get_user', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ email: userEmail })
+                });
+
+                const data = await response.json();
+                debugger;
+                
+                emails = data.data.emails.map((item, index) => ({
+                    id: item.id,
+                    name: data.data.name || `Remetente ${index + 1}`, 
+                    classification: item.classification.toLowerCase(), 
+                    message: item.message
+                }));
+
+                filteredEmails = [...emails];
+
+                loadingState.classList.add('hidden');
+                renderEmails();
+                setActiveFilter('all');
+            } catch (error) {
+                console.error('Erro ao carregar emails:', error);
+                loadingState.classList.add('hidden');
+                emptyState.classList.remove('hidden');
+            }
+
+            
+            closeDialog.addEventListener('click', hideDialog);
+            closeDialogBtn.addEventListener('click', hideDialog);
+            dialogOverlay.addEventListener('click', hideDialog);
+
+            searchInput.addEventListener('input', handleSearch);
+            refreshBtn.addEventListener('click', handleRefresh);
+
+            filterAll.addEventListener('click', () => applyFilter('all'));
+            filterProductive.addEventListener('click', () => applyFilter('produtivo'));
+            filterUnproductive.addEventListener('click', () => applyFilter('improdutivo'));
+        }
+
+
+        
+        function renderEmails() {
+            emailCards.innerHTML = '';
+            
+            if (filteredEmails.length === 0) {
+                emailCards.classList.add('hidden');
+                emptyState.classList.remove('hidden');
+            } else {
+                emailCards.classList.remove('hidden');
+                emptyState.classList.add('hidden');
+                
+                filteredEmails.forEach((email, index) => {
+                    const card = createEmailCard(email, index);
+                    emailCards.appendChild(card);
+                });
+            }
+            
+            totalCount.textContent = filteredEmails.length;
+        }
+
+        
+        function createEmailCard(email, index) {
+            const card = document.createElement('div');
+            card.className = 'card bg-white rounded-xl shadow-md overflow-hidden fade-in';
+            card.style.animationDelay = `${index * 0.05}s`;
+            
+            const badgeClass = email.classification === 'produtivo' ? 'badge-productive' : 'badge-unproductive';
+            const badgeText = email.classification === 'produtivo' ? 'Produtivo' : 'Improdutivo';
+            
+            card.innerHTML = `
+                <div class="p-6">
+                    <div class="flex justify-between items-start">
+                        <h3 class="text-lg font-semibold text-gray-800 truncate">${email.name}</h3>
+                        <span class="${badgeClass} text-white text-xs font-medium px-2.5 py-1 rounded-full">
+                            ${badgeText}
+                        </span>
+                    </div>
+                    <p class="mt-3 text-gray-600 line-clamp-2 text-sm">${email.message}</p>
+                    <button class="view-message mt-4 text-blue-600 hover:text-blue-800 text-sm font-medium flex items-center" data-id="${email.id}">
+                        Ver mensagem completa
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                        </svg>
+                    </button>
+                </div>
+            `;
+            
+            
+            card.querySelector('.view-message').addEventListener('click', () => {
+                showDialog(email);
+            });
+            
+            return card;
+        }
+
+        
+        function showDialog(email) {
+            dialogName.textContent = email.name;
+            
+            const badgeClass = email.classification === 'produtivo' ? 'badge-productive' : 'badge-unproductive';
+            const badgeText = email.classification === 'produtivo' ? 'Produtivo' : 'Improdutivo';
+            
+            dialogClassification.innerHTML = `
+                <span class="${badgeClass} text-white text-xs font-medium px-2.5 py-1 rounded-full">
+                    ${badgeText}
+                </span>
+            `;
+            
+            dialogMessage.textContent = email.message;
+            
+            messageDialog.classList.remove('hidden');
+            setTimeout(() => {
+                dialogOverlay.classList.add('opacity-100');
+                dialogContent.classList.remove('opacity-0', 'scale-95');
+                dialogContent.classList.add('opacity-100', 'scale-100');
+            }, 10);
+        }
+
+        
+        function hideDialog() {
+            dialogOverlay.classList.remove('opacity-100');
+            dialogContent.classList.remove('opacity-100', 'scale-100');
+            dialogContent.classList.add('opacity-0', 'scale-95');
+            
+            setTimeout(() => {
+                messageDialog.classList.add('hidden');
+            }, 300);
+        }
+
+        
+        function handleSearch() {
+            searchTerm = searchInput.value.toLowerCase().trim();
+            applyFilters();
+        }
+
+        
+        function handleRefresh() {
+            loadingState.classList.remove('hidden');
+            emailCards.classList.add('hidden');
+            emptyState.classList.add('hidden');
+             
+            setTimeout(() => {
+                loadingState.classList.add('hidden');
+                applyFilters();
+            }, 1000);
+        }
+
+        
+        function applyFilter(filter) {
+            currentFilter = filter;
+            setActiveFilter(filter);
+            applyFilters();
+        }
+
+        
+        function setActiveFilter(filter) {
+            
+            [filterAll, filterProductive, filterUnproductive].forEach(btn => {
+                btn.classList.remove('bg-blue-100', 'text-blue-800', 'border-blue-500');
+                btn.classList.add('bg-white', 'text-gray-700', 'border-gray-300');
+            });
+            
+            
+            if (filter === 'all') {
+                filterAll.classList.remove('bg-white', 'text-gray-700', 'border-gray-300');
+                filterAll.classList.add('bg-blue-100', 'text-blue-800', 'border-blue-500');
+            } else if (filter === 'produtivo') {
+                filterProductive.classList.remove('bg-white', 'text-gray-700', 'border-gray-300');
+                filterProductive.classList.add('bg-blue-100', 'text-blue-800', 'border-blue-500');
+            } else if (filter === 'improdutivo') {
+                filterUnproductive.classList.remove('bg-white', 'text-gray-700', 'border-gray-300');
+                filterUnproductive.classList.add('bg-blue-100', 'text-blue-800', 'border-blue-500');
+            }
+        }
+
+        
+        function applyFilters() {
+            filteredEmails = emails.filter(email => {
+                
+                if (currentFilter !== 'all' && email.classification !== currentFilter) {
+                    return false;
+                }
+                
+                
+                if (searchTerm && !email.name.toLowerCase().includes(searchTerm) && 
+                    !email.message.toLowerCase().includes(searchTerm)) {
+                    return false;
+                }
+                
+                return true;
+            });
+            
+            renderEmails();
+        }
+
+        init();
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'95ab319961d5648d',t:'MTc1MTc2MzkyNi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>

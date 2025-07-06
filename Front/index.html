@@ -1,0 +1,388 @@
+
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RPA - EMAIL</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f0f9ff;
+            background-image: 
+                radial-gradient(at 40% 20%, rgba(0, 100, 255, 0.05) 0px, transparent 50%),
+                radial-gradient(at 80% 70%, rgba(0, 200, 100, 0.05) 0px, transparent 50%);
+        }
+        
+        .card {
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #0077b6 0%, #0096c7 100%);
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #0096c7 0%, #00b4d8 100%);
+            transform: translateY(-2px);
+        }
+        
+        .custom-file-input::-webkit-file-upload-button {
+            visibility: hidden;
+        }
+        
+        .custom-file-input::before {
+            content: 'Selecionar arquivo';
+            display: inline-block;
+            background: linear-gradient(135deg, #0077b6 0%, #0096c7 100%);
+            color: white;
+            border-radius: 0.375rem;
+            padding: 8px 45px;
+            outline: none;
+            white-space: nowrap;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 0.875rem;
+        }
+        
+        .custom-file-input:hover::before {
+            background: linear-gradient(135deg, #0096c7 0%, #00b4d8 100%);
+        }
+        
+        .custom-file-input:active::before {
+            background: linear-gradient(135deg, #0077b6 0%, #0096c7 100%);
+        }
+        
+        .alert-success {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, #90e0ef 0%, #80ed99 100%);
+            padding: 16px 24px;
+            border-radius: 8px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            display: none; 
+            animation: slideDown 0.5s ease forwards;
+        }
+        .alert-error {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, #ff4e50 0%, #f64c72 100%);
+            color: #fff;
+            padding: 14px 24px;
+            border-radius: 12px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+            z-index: 1000;
+            display: none;
+            animation: slideDown 0.4s ease forwards;
+            font-size: 14px;
+            font-weight: 500;
+            letter-spacing: 0.3px;
+        }
+        .alert-warn {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, #b7c40a 0%, #98e608 100%);
+            padding: 16px 24px;
+            border-radius: 8px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            display: none; 
+            animation: slideDown 0.5s ease forwards;
+        }
+        .alert-message {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, #b7c40a 0%, #98e608 100%);
+            padding: 16px 24px;
+            border-radius: 8px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            display: none; 
+            animation: slideDown 0.5s ease forwards;
+        } 
+        .alert-file {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, #b7c40a 0%, #98e608 100%);
+            padding: 16px 24px;
+            border-radius: 8px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            display: none; 
+            animation: slideDown 0.5s ease forwards;
+        } 
+        @keyframes slideDown {
+            0% {
+                transform: translate(-50%, -20px);
+                opacity: 0;
+            }
+            100% {
+                transform: translate(-50%, 0);
+                opacity: 1;
+            }
+        }
+        
+        .file-name {
+            margin-left: 10px;
+            font-size: 0.875rem;
+        }
+    </style>
+</head>
+<body class="min-h-screen py-12 px-4 sm:px-6">
+    <div class="max-w-3xl mx-auto">
+        <div class="card bg-white rounded-xl p-8 mb-8">
+            <div class="text-center mb-8">
+                <h1 class="text-3xl font-bold text-blue-700 mb-2">RPA - EMAIL</h1>
+                <div class="h-1 w-24 bg-gradient-to-r from-blue-600 to-green-500 mx-auto rounded-full"></div>
+                <p class="text-gray-600 mt-4">Preencha o formulário abaixo para enviar sua solicitação</p>
+            </div>
+            
+            <form id="emailForm" class="space-y-6">
+                <div>
+                    <label for="name" class="block text-sm font-medium text-gray-700 mb-1">Nome completo</label>
+                    <input type="text" id="name" name="name" required 
+                           class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all outline-none">
+                </div>
+                
+                <div>
+                    <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                    <input type="email" id="email" name="email" required 
+                           class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all outline-none">
+                </div>
+                
+                <div>
+                    <label for="phone" class="block text-sm font-medium text-gray-700 mb-1">Celular</label>
+                    <input type="tel" id="phone" name="phone" required 
+                           class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all outline-none">
+                </div>
+                
+                <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Escolha o tipo de envio</label>
+                <div class="flex space-x-4">
+                    <button type="button" id="btnMessage" class="px-4 py-2 rounded-lg border border-blue-500 text-blue-500 hover:bg-blue-100 transition">Escrever mensagem</button>
+                    <button type="button" id="btnFile" class="px-4 py-2 rounded-lg border border-green-500 text-green-500 hover:bg-green-100 transition">Enviar arquivo</button>
+                </div>
+                <p id="optionInfo" class="text-sm text-gray-600 mt-2"></p>
+                </div>
+
+                
+                <div id="messageField" class="mt-4 hidden">
+                <label for="message" class="block text-sm font-medium text-gray-700 mb-1">Mensagem</label>
+                <textarea id="message" name="message" rows="4"
+                            class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all outline-none"
+                            disabled></textarea>
+                </div>
+
+                
+                <div id="fileField" class="mt-4 hidden">
+                <label for="file" class="block text-sm font-medium text-gray-700 mb-1">Arquivo (PDF ou TXT)</label>
+                <div class="flex items-center">
+                    <input type="file" id="file" name="file" accept=".pdf,.txt" class="custom-file-input" disabled>
+                    <span id="file-name" class="file-name text-gray-500"></span>
+                </div>
+                </div>
+                
+                <div class="pt-4">
+                    <button type="submit" class="btn-primary w-full py-3 px-6 text-white font-medium rounded-lg shadow-md hover:shadow-lg focus:outline-none">
+                        Enviar formulário
+                    </button>
+                </div>
+            </form>
+        </div>
+        
+        <div class="card bg-white rounded-xl p-6">
+            <div class="flex items-center space-x-4">
+                <div class="bg-gradient-to-r from-blue-600 to-green-500 p-3 rounded-full">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                </div>
+                <div>
+                    <h3 class="font-medium text-gray-800">Deseja visualizar a resposta do seu Email?</h3>
+                    <p class="text-sm text-gray-600">Utilize o email preenchido no formulário para consultar a <a class="text-sm text-blue-600" href="login.html">Sua Resposta</a> </p>
+                   
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div id="successAlert" class="alert-success">
+        <div class="flex items-center">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-green-800 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+            </svg>
+            <span class="font-medium text-green-800">Formulário enviado com sucesso!</span>
+        </div>
+    </div>
+    <div id="errorAlert" class="alert-error">
+        <div class="flex items-center">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-green-800 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+            </svg>
+            <span class="font-medium text-green-800">Erro ao enviar o formulário.</span>
+        </div>
+    </div>
+    <div id="warnAlert" class="alert-warn">
+        <div class="flex items-center">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-yellow-600 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.29 3.86L1.82 18a1.5 1.5 0 001.29 2.24h18.78a1.5 1.5 0 001.29-2.24L13.71 3.86a1.5 1.5 0 00-2.42 0zM12 9v4m0 4h.01" />
+            </svg>
+            <span class="font-medium text-green-800">Por favor, escolha se deseja escrever uma mensagem ou enviar um arquivo.</span>
+        </div>
+    </div>
+    <div id="messageAlert" class="alert-message">
+        <div class="flex items-center">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-yellow-600 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.29 3.86L1.82 18a1.5 1.5 0 001.29 2.24h18.78a1.5 1.5 0 001.29-2.24L13.71 3.86a1.5 1.5 0 00-2.42 0zM12 9v4m0 4h.01" />
+            </svg>
+            <span class="font-medium text-green-800">A mensagem está vazia.</span>
+        </div>
+    </div>
+    <div id="fileAlert" class="alert-file">
+        <div class="flex items-center">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-yellow-600 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.29 3.86L1.82 18a1.5 1.5 0 001.29 2.24h18.78a1.5 1.5 0 001.29-2.24L13.71 3.86a1.5 1.5 0 00-2.42 0zM12 9v4m0 4h.01" />
+            </svg>
+            <span class="font-medium text-green-800">Por favor, selecione um arquivo.</span>
+        </div>
+    </div>
+   
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('emailForm');
+            const fileInput = document.getElementById('file');
+            const fileNameSpan = document.getElementById('file-name');
+            const successAlert = document.getElementById('successAlert');
+            const errorAlert = document.getElementById('errorAlert');
+            const warnAlert = document.getElementById('warnAlert');
+            const messageAlert = document.getElementById('messageAlert');
+            const fileAlert = document.getElementById('fileAlert');
+            const messageTextarea = document.getElementById('message');
+
+            const btnMessage = document.getElementById('btnMessage');
+            const btnFile = document.getElementById('btnFile');
+            const messageField = document.getElementById('messageField');
+            const fileField = document.getElementById('fileField');
+            const optionInfo = document.getElementById('optionInfo');
+
+            let selectedOption = null;
+            
+
+            btnMessage.addEventListener('click', () => {
+                selectedOption = 'message';
+                messageField.classList.remove('hidden');
+                fileField.classList.add('hidden');
+                messageTextarea.disabled = false;
+                fileInput.disabled = true;
+                optionInfo.textContent = 'Você escolheu escrever a mensagem. O envio de arquivo foi desabilitado.';
+                fileInput.value = '';
+                fileNameSpan.textContent = '';
+            });
+
+            btnFile.addEventListener('click', () => {
+                selectedOption = 'file';
+                messageField.classList.add('hidden');
+                fileField.classList.remove('hidden');
+                messageTextarea.disabled = true;
+                fileInput.disabled = false;
+                optionInfo.textContent = 'Você escolheu enviar um arquivo. A caixa de mensagem foi desabilitada.';
+                messageTextarea.value = '';
+            });
+
+
+            fileInput.addEventListener('change', function () {
+                fileNameSpan.textContent = this.files.length > 0 ? this.files[0].name : '';
+            });
+
+            form.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                
+
+                const name = document.getElementById('name').value;
+                const email = document.getElementById('email').value;
+                const phone = document.getElementById('phone').value;
+                const message = messageTextarea.value;
+
+                if (!selectedOption) {
+
+                    warnAlert.style.display = 'block';
+                    setTimeout(() => warnAlert.style.display = 'none', 4000);
+                    return;
+                }
+
+                if (!name || !email || !phone) {
+                    alert('Por favor, preencha todos os campos obrigatórios.');
+                    return;
+                }
+
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (!emailRegex.test(email)) {
+                    alert('Por favor, insira um email válido.');
+                    return;
+                }
+
+                const formData = new FormData();
+
+                if (selectedOption === 'message') {
+                    if (!message.trim()) {
+                        messageAlert.style.display = 'block';
+                        setTimeout(() => messageAlert.style.display = 'none', 3000);
+                        return;
+                    }
+                    formData.append('data', JSON.stringify({ name, email, cellphone: phone, message }));
+                } else if (selectedOption === 'file') {
+                    if (fileInput.files.length === 0) {
+                        fileAlert.style.display = 'block';
+                        setTimeout(() => fileAlert.style.display = 'none', 3000);
+                        return;
+                    }
+                    formData.append('data', JSON.stringify({ name, email, cellphone: phone}));
+                    formData.append('file', fileInput.files[0]);
+                }
+
+                const response = await fetch('http://127.0.0.1:5000/create_email', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (response.ok) {
+                    debugger;
+                    successAlert.style.display = 'block';
+                    setTimeout(() => successAlert.style.display = 'none', 3000);
+                    form.reset();
+                    fileNameSpan.textContent = '';
+                    optionInfo.textContent = '';
+                    selectedOption = null;
+                    messageField.classList.add('hidden');
+                    fileField.classList.add('hidden');
+                } else {
+                    errorAlert.style.display = 'block';
+                    setTimeout(() => errorAlert.style.display = 'none', 3000);
+                }
+            });
+        });
+
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'959a35b8b376cb4c',t:'MTc1MTU4NTgzNy4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
