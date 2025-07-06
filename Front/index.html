@@ -354,19 +354,27 @@
 
    
     <script>
-        document.addEventListener('DOMContentLoaded', async function() {
+        let apiInterval = setInterval(async () => {
             const loading = document.getElementById('loading');
             const callBackAlert = document.getElementById('callBackAlert');
-            const response = await fetch('https://rpa-email.onrender.com', {method: 'HEAD'});
             loading.style.display = 'block';
+            try {
+                const response = await fetch('https://rpa-email.onrender.com', { method: 'HEAD' });
 
-            if (!response) {
+                if (response.ok) {
+                    loading.style.display = 'none';
+                    clearInterval(apiInterval); 
+                } else {
+                    throw new Error('Resposta não OK');
+            }
+            } catch (error) {
                 callBackAlert.style.display = 'block';
                 setTimeout(() => callBackAlert.style.display = 'none', 5000);
-                loading.style.display = 'block';
-            }else{
-                loading.style.display = 'none';
             }
+        }, 1000); 
+
+        document.addEventListener('DOMContentLoaded', async function() {
+            
 
             const form = document.getElementById('emailForm');
             const fileInput = document.getElementById('file');
