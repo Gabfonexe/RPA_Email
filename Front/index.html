@@ -359,7 +359,7 @@
             const callBackAlert = document.getElementById('callBackAlert');
             loading.style.display = 'block';
             try {
-                const response = await fetch('http://127.0.0.1:5000/api_callback', { method: 'GET' });
+                const response = await fetch('https://rpa-email.onrender.com/api_callback', { method: 'GET' });
                 const data = await response.json();
                 debugger;
                 if (data['success']) {
