@@ -162,6 +162,20 @@
             display: none;
             font-weight: bold;
         }
+        #loadingForm {
+            position: fixed;
+            top: 80px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, #e0e0e0 0%, #ffffff 100%);
+            padding: 12px 20px;
+            border-radius: 8px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            display: none;
+            font-weight: bold;
+        }
+
         .dots {
             display: inline-block;
             margin-left: 5px;
@@ -351,6 +365,14 @@
             <span class="dot">.</span>
         </span>
     </div>
+    <div id="loadingForm" style="display: none;">
+        <span class="spinner">⏳</span> Enviando Formulário 
+        <span class="dots">
+            <span class="dot">.</span>
+            <span class="dot">.</span>
+            <span class="dot">.</span>
+        </span>
+    </div>
 
    
     <script>
@@ -361,7 +383,6 @@
             try {
                 const response = await fetch('https://rpa-email.onrender.com/api_callback', { method: 'GET' });
                 const data = await response.json();
-                debugger;
                 if (data['success']) {
                     clearInterval(apiInterval); 
                     loading.style.display = 'none';
@@ -423,7 +444,7 @@
 
             form.addEventListener('submit', async function(e) {
                 e.preventDefault();
-                
+                const loadingForm = document.getElementById('loadingForm');
 
                 const name = document.getElementById('name').value;
                 const email = document.getElementById('email').value;
@@ -447,6 +468,7 @@
                     alert('Por favor, insira um email válido.');
                     return;
                 }
+                loadingForm.style.display = 'block';
 
                 const formData = new FormData();
 
@@ -473,7 +495,7 @@
                 });
 
                 if (response.ok) {
-                    debugger;
+                    setTimeout(() => loadingForm.style.display = 'none', 100);
                     successAlert.style.display = 'block';
                     setTimeout(() => successAlert.style.display = 'none', 3000);
                     form.reset();
