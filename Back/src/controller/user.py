@@ -13,5 +13,8 @@ class GetUser(Resource):
             return jsonify({'success':'Usuário encontrado.'}) if response==True else jsonify({'error': 'Usuário não encontrado.'})
         
             
+class GetRepsonse(Resource):
+    def get(self):
+        return jsonify({'success':'API Iniciada.'})
              
 
